@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "concise-clock": "^1.0.4",
     "core-js": "^3.27.2",
     "vue": "^2.7.14"
   },
