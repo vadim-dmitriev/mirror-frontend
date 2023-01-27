@@ -15,7 +15,6 @@ export default {
 		AnalogClock,
 		Weather,
 	}
-
 }
 </script>
 
@@ -29,7 +28,6 @@ html {
 	background-color: #000;
 	color: #eee;
 	font-family: 'Roboto', sans-serif;
-
 }
 
 #app {}

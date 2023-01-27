@@ -99,15 +99,15 @@ export default {
 	mounted: async function () {
 		console.log("WeatherWidget monted");
 
-		// await this.updateWeatherData();
+		await this.updateWeatherData();
 		// Запускаем обновление данных о погоде с интервалом в минуту
-		// setInterval(this.updateWeatherData, 1 * 60 * 1000);
+		setInterval(this.updateWeatherData, 1 * 60 * 1000);
 	},
 	methods: {
 		updateWeatherData: async function () {
-			let response = await fetch("http://localhost:8081/api/weather");
+			let response = await fetch("http://localhost:8081/weather");
 
-			if (response.ok) {
+			if (response.status == 200) {
 				let json = await response.json();
 
 				this.setCurrentWeather(json.current);
@@ -135,6 +135,7 @@ export default {
 				this.forecast[i].maxTemp = Number(forecastList[i].temp_max).toFixed(0);
 				this.forecast[i].pop = forecastList[i].pop * 100;
 				this.forecast[i].kind = forecastList[i].kind;
+				this.forecast[i].humidity = forecastList[i].humidity;
 			}
 		},
 		weatherForecastIcon(forecastKind) {
