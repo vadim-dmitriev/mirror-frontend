@@ -174,10 +174,11 @@ export default {
 <style scoped>
 .weather {
   position: absolute;
-  top: 0px;
-  left: 300px;
+  bottom: 0;
+  left: 600px;
+  width: 500px;
+
   display: table;
-  width: 300px;
 }
 
 .weather > div {
@@ -196,7 +197,7 @@ export default {
 }
 
 .weather-temprature {
-  font-size: 50px;
+  font-size: 5vw;
   text-align: center;
   vertical-align: middle;
 }
@@ -218,8 +219,11 @@ img.icon {
 }
 
 .weather-forecast-day {
-  display: flex;
   width: 200%;
+
+  display: flex;
+
+  font-size: 2.5vh;
 }
 
 .weather-forecast-day-name {

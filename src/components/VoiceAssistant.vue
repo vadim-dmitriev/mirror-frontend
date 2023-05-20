@@ -22,10 +22,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 img {
   animation-direction: alternate;
-  display: block;
   opacity: 1;
   transition: opacity 1s ease-out;
   -moz-transition: opacity 1s ease-out;
