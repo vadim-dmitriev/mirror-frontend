@@ -8,6 +8,7 @@
     <!-- clock minute -->
     <div class="hour animate"></div>
     <!-- clock hour -->
+    <div v-for="n in 12" :key="n" class="dashes" />
   </div>
 </template>
 
@@ -17,40 +18,73 @@ export default {
   data: function () {
     return {
       currentTime: null,
+
       hourHand: null,
       minuteHand: null,
       secondHand: null,
+
+      dashHands: [],
+
+      hourDegree: 0,
+      minuteDegree: 0,
+      secondDegree: 0,
+
+      isMinuteStarted: false,
+      isHourStarted: false,
     };
   },
   mounted: function () {
     // Инициализируем атрибуты компонента
     this.currentTime = new Date();
+
     this.hourHand = document.querySelector(".clock").querySelector(".hour");
     this.minuteHand = document.querySelector(".clock").querySelector(".min");
     this.secondHand = document.querySelector(".clock").querySelector(".sec");
+    this.dashHands = document
+      .querySelector(".clock")
+      .querySelectorAll(".dashes");
+    console.log(this.dashHands);
 
-    // Запускаем ре-рендер с интервалом в секунду
-    setInterval(this.runClock, 1000);
+    this.hourDegree = this.currentTime.getHours() * 15; // 360/24
+    this.minuteDegree = this.currentTime.getMinutes() * 6; // 360/60
+    this.secondDegree = this.currentTime.getSeconds() * 6; // 360/60
+    for (let i = 0; i < 12; i++) {
+      this.dashHands[i].style.transform = "rotate(" + i * 30 + "deg)";
+    }
+
+    // Устанавливаем изначальное положение.
+    this.hourHand.style.transform = "rotate(" + this.hourDegree + "deg)";
+    this.minuteHand.style.transform = "rotate(" + this.minuteDegree + "deg)";
+    this.secondHand.style.transform = "rotate(" + this.secondDegree + "deg)";
+
+    // Запускаем ре-рендер для секунд, как ре-рендр с самым маленьким интервалом.
+    // Он в свою очеред будет запускать ре-рендр для минут. А минуты для часов.
+    setInterval(this.second, 1000);
   },
   methods: {
-    runClock: function () {
-      // Берем текущее время
-      this.currentTime = new Date();
+    hour: function () {
+      this.hourDegree = this.hourDegree + 30; // 360/12
+      this.hourHand.style.transform = "rotate(" + this.hourDegree + "deg)";
+    },
+    minute: function () {
+      this.minuteDegree = this.minuteDegree + 6; // 360/60
+      this.minuteHand.style.transform = "rotate(" + this.minuteDegree + "deg)";
 
-      // Getting hour handle degree based on decimal hour value calculated
-      // from current hour and curent minutes
-      var hoursDegree =
-        (this.currentTime.getHours() + this.currentTime.getMinutes() / 60) * 30; // 360/12
+      if (!this.isHourStarted && this.minuteDegree % 360 == 0) {
+        this.isHourStarted = true;
+        this.hour();
+        setInterval(this.hour, 60 * 60 * 1000);
+      }
+    },
+    second: function () {
+      this.secondDegree = this.secondDegree + 6; // 360/60
+      this.secondHand.style.transform = "rotate(" + this.secondDegree + "deg)";
 
-      //Getting minute handle degree
-      var minutesDegree = this.currentTime.getMinutes() * 6; // 360/60
-      //Getting second handle degree
-      var secondsDegree = this.currentTime.getSeconds() * 6; // 360/60
-
-      // Addint rotate attributes to handles
-      this.hourHand.style.transform = "rotate(" + hoursDegree + "deg)";
-      this.minuteHand.style.transform = "rotate(" + minutesDegree + "deg)";
-      this.secondHand.style.transform = "rotate(" + secondsDegree + "deg)";
+      if (!this.isMinuteStarted && this.secondDegree % 360 == 0) {
+        this.isMinuteStarted = true;
+        this.minute();
+        setInterval(this.minute, 60 * 1000);
+      }
     },
   },
 };
@@ -62,6 +96,16 @@ export default {
   width: 10px;
   height: 10px;
   border-radius: 50%;
+}
+
+.dashes {
+  position: absolute;
+  width: 1px;
+  top: 0%;
+  height: 15px;
+  background: #eee;
+  z-index: 2;
+  transform-origin: 10% 250px;
 }
 
 .hour,
