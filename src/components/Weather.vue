@@ -175,7 +175,7 @@ export default {
 .weather {
   position: absolute;
   bottom: 0;
-  left: 600px;
+  left: 0px;
   width: 500px;
 
   display: table;

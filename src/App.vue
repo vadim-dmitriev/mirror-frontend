@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <AnalogClock class="visible-widget" />
-    <Weather class="visible-widget" />
-    <NewsFeed class="visible-widget" />
+    <AnalogClock class="visible-bottom-widget" />
+    <Weather class="visible-top-widget" />
+    <NewsFeed class="visible-top-widget" />
 
     <VoiceAssistant class="hidden-widget" />
   </div>
@@ -62,10 +62,16 @@ html {
 #app {
 }
 
-.visible-widget {
+.visible-bottom-widget {
   position: absolute;
   left: 0;
   bottom: 0;
+}
+
+.visible-top-widget {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .hidden-widget {

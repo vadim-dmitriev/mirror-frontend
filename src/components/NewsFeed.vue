@@ -75,8 +75,9 @@ export default {
 
 <style scoped>
 .news {
-  left: 1300px;
+  left: 750px;
   width: 800px;
+  font-size: 20px;
 }
 
 .news-item {
