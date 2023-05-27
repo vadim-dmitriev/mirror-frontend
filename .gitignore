@@ -1,3 +1,6 @@
+# Specific Deployment
+deploy.sh
+
 .DS_Store
 node_modules
 /dist
