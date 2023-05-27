@@ -42,7 +42,7 @@
               src="../assets/icons/weather/precipitation.png"
             />
           </div>
-          <div>{{ item.pop }}%</div>
+          <div>{{ item.pop.toFixed(0) }}%</div>
         </div>
       </div>
     </div>
