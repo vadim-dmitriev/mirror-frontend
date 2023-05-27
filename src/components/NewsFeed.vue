@@ -66,7 +66,7 @@ export default {
         hour: "2-digit",
         minute: "2-digit",
       };
-      return created.toLocaleTimeString([], options);
+      return created.toLocaleTimeString("ru-RU", options);
     },
   },
   computed: {},
