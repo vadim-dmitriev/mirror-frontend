@@ -1,112 +1,150 @@
 <template>
-  <div class="clock">
-    <div class="dot"></div>
-    <!-- clock dot -->
-    <div class="sec animate"></div>
-    <!-- clock second -->
-    <div class="min animate"></div>
-    <!-- clock minute -->
-    <div class="hour animate"></div>
-    <!-- clock hour -->
-  </div>
+	<div ref="wrapper" class="wrapper">
+		<div class="clock">
+			<div ref="second" class="hand secondHand"></div>
+			<div ref="minute" class="hand minuteHand"></div>
+			<div ref="hour" class="hand hourHand"></div>
+		</div>
+	</div>
 </template>
 
 <script>
+
+const SCALE = 2;
+
 export default {
-  name: "AnalogClock",
-  data: function () {
-    return {
-      currentTime: null,
-      hourHand: null,
-      minuteHand: null,
-      secondHand: null,
-    };
-  },
-  mounted: function () {
-    // Инициализируем атрибуты компонента
-    this.currentTime = new Date();
-    this.hourHand = document.querySelector(".clock").querySelector(".hour");
-    this.minuteHand = document.querySelector(".clock").querySelector(".min");
-    this.secondHand = document.querySelector(".clock").querySelector(".sec");
+	name: "AnalogClock",
+	data: () => ({
+		currentTime: null,
+		hourHand: null,
+		minuteHand: null,
+		secondHand: null,
+	}),
+	mounted() {
+		this.$refs.wrapper.style.width = `${SCALE * 100}px`;
+		this.$refs.wrapper.style.height = `${SCALE * 100}px`;
 
-    // Запускаем ре-рендер с интервалом в секунду
-    setInterval(this.runClock, 1000);
-  },
-  methods: {
-    runClock: function () {
-      // Берем текущее время
-      this.currentTime = new Date();
+		// Initializing attributes
+		this.currentTime = new Date();
+		this.hourHand = this.$refs.hour;
+		this.minuteHand = this.$refs.minute;
+		this.secondHand = this.$refs.second;
 
-      // Getting hour handle degree based on decimal hour value calculated
-      // from current hour and curent minutes
-      var hoursDegree =
-        (this.currentTime.getHours() + this.currentTime.getMinutes() / 60) * 30; // 360/12
+		// Getting secondhand degree 
+		let secondsDegrees = this.currentTime.getSeconds() * 360 / 60;
 
-      //Getting minute handle degree
-      var minutesDegree = this.currentTime.getMinutes() * 6; // 360/60
-      //Getting second handle degree
-      var secondsDegree = this.currentTime.getSeconds() * 6; // 360/60
+		// Getting minutehand degree  
+		let minutesDegrees = this.currentTime.getMinutes() * 360 / 60;
 
-      // Addint rotate attributes to handles
-      this.hourHand.style.transform = "rotate(" + hoursDegree + "deg)";
-      this.minuteHand.style.transform = "rotate(" + minutesDegree + "deg)";
-      this.secondHand.style.transform = "rotate(" + secondsDegree + "deg)";
-    },
-  },
+		// Getting hourhand degree based on decimal hour value calculated 
+		// from current hour and curent minutes
+		let hoursDegrees = (this.currentTime.getHours() + this.currentTime.getMinutes() / 60) * 360 / 12;
+
+		this.hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+		this.minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+		this.secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+
+		this.runClock();
+	},
+	methods: {
+		runClock() {
+			this.currentTime = new Date();
+
+			// Getting secondhand degree 
+			let secondsDegrees = this.currentTime.getSeconds() * 360 / 60;
+
+			if ( secondsDegrees !== 0) {
+				// Adding rotate attributes to secondhand
+				this.secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+			} else {
+				// Getting hourhand degree based on decimal hour value calculated 
+				// from current hour and curent minutes
+				let hoursDegrees = (this.currentTime.getHours() + this.currentTime.getMinutes() / 60) * 360 / 12;
+
+				// Getting minutehand degree  
+				let minutesDegrees = this.currentTime.getMinutes() * 360 / 60;
+				
+				// Fixing transform bug
+				this.hourHand.classList.add('fixed');
+				this.minuteHand.classList.add('fixed');
+				this.secondHand.classList.add('fixed');
+				
+				// Adding rotate attributes to hands
+				this.hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+				this.minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+				this.secondHand.style.transform = `rotate(0deg)`;
+
+				// Fixing transform bug
+				setTimeout(() => {
+					this.hourHand.classList.remove('fixed');
+					this.minuteHand.classList.remove('fixed');
+					this.secondHand.classList.remove('fixed'); },
+				0);
+			}
+			
+			// Rerendering increments per second
+			setTimeout(this.runClock, 1000);
+		},
+	}
 };
 </script>
 
-<style scoped>
-.dot {
-  background-color: #eee;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.hour,
-.min,
-.sec {
-  position: absolute;
-  background-color: #eee;
-  transform-origin: 50% 100%;
-  border-radius: 2px;
-}
-
-.hour {
-  width: 5px;
-  height: 35%;
-  top: 15%;
-}
-
-.min {
-  width: 3px;
-  height: 40%;
-  top: 10%;
-}
-
-.sec {
-  width: 1px;
-  height: 45%;
-  top: 5%;
-}
-
-.animate {
-  transition: all 0.1s ease-in-out;
+<style>
+.wrapper {
+	margin: 20px;
 }
 
 .clock {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 500px;
-  height: 500px;
+	position: relative;
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	border: 2px solid #eeeeee;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	&::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: #eeeeee;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+	}
+}
 
-  border: 2px solid #eee;
-  border-radius: 50%;
+.hand {
+	position: absolute;
+	background-color: #eeeeee;
+	transform-origin: 50% 100%;
+	border-radius: 2px;
+	transition: all 0.1s ease-in-out;
+}
+
+.fixed {
+	transition: none;
+}
+
+.hourHand {
+	width: 5px;
+	height: 35%;
+	top: 15%;
+}
+
+.minuteHand {
+	width: 3px;
+	height: 40%;
+	top: 10%;
+}
+
+.secondHand {
+	width: 1px;
+	height: 45%;
+	top: 5%;
 }
 </style>
