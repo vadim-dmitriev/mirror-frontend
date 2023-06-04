@@ -1,55 +1,45 @@
 <template>
-  <div class="weather">
-    <div class="weather-main">
-      <div class="weather-temprature">
-        {{ tempratureViewed(currentTemprature) }}
-      </div>
-      <div class="weather-icon">
-        <img v-bind:src="currentWeatherKindIcon" class="icon" />
-      </div>
-    </div>
-
-    <div class="weather-bottom">
-      <div>Ветер {{ currentWindSpeedViewed }}м/с</div>
-      <div>Влажность {{ currentHumidityViewed }}%</div>
-    </div>
-
-    <hr size="0" color="#bbb" noshade />
-    <br />
-
-    <div class="weather-forecast">
-      <div class="weather-forecast-day" v-for="item in forecast" :key="item">
-        <div class="weather-forecast-day-name">
-          {{ item.dayOfWeek }}
-        </div>
-        <div class="weather-forecast-day-main">
-          <div>
-            <img
-              class="weather-forecast-day-icon"
-              v-bind:src="weatherForecastIcon(item.kind)"
-            />
+  <div class="wrapper">
+    <div ref="weather" class="weather">
+      <div class="weather-main">
+        <div class="container">
+          <div class="container-item weather-temprature">
+            {{ tempratureViewed(currentTemprature) }}
           </div>
-          <div>
-            {{ tempratureViewed(item.minTemp) }}...{{
-              tempratureViewed(item.maxTemp)
-            }}
+          <div class="container-item weather-cloud-icon">
+            <img :src="currentWeatherKindIcon" />
           </div>
         </div>
-        <div class="weather-forecast-day-precipitation">
-          <div>
-            <img
-              style="height: 20px; opacity: 0.6"
-              src="../assets/icons/weather/precipitation.png"
-            />
-          </div>
-          <div>{{ item.pop.toFixed(0) }}%</div>
+
+        <div class="container">
+          <div class="container-item weather-wind">Ветер {{ currentWindSpeedViewed }} м/с</div>
+          <div class="container-item weather-humidity">Влажность {{ currentHumidityViewed }}%</div>
         </div>
       </div>
+
+      <table class="weather-forecast">
+        <tr class="weather-forecast-day" v-for="item in forecast" :key="item">
+          <td class="weather-forecast-day-name">
+            <div>{{ item.dayOfWeek }}</div>
+          </td>
+          <td class="weather-forecast-day-cloud-temprature">
+            <img :src="weatherForecastIcon(item.kind)" class="weather-forecast-day-cloud-icon" />
+            <div>{{ tempratureViewed(item.minTemp) }}...{{ tempratureViewed(item.maxTemp) }}</div>
+          </td>
+          <td class="weather-forecast-day-precipitation">
+            <img src="../assets/icons/weather/precipitation.png" class="weather-forecast-day-precipitation-icon" />
+            <div>{{ item.pop.toFixed(0) }}%</div>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
 
 <script>
+
+const FONT_SIZE = 20;
+
 export default {
   name: "Weather",
   data() {
@@ -98,6 +88,8 @@ export default {
     };
   },
   mounted: async function () {
+    this.$refs.weather.style.fontSize = `${FONT_SIZE}px`;
+
     await this.updateWeatherData();
     // Запускаем обновление данных о погоде с интервалом в минуту
     setInterval(this.updateWeatherData, 1 * 60 * 1000);
@@ -172,80 +164,92 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+	margin: 20px;
+}
 .weather {
-  position: absolute;
-  bottom: 0;
-  left: 0px;
-  width: 500px;
-
-  display: table;
+  font-size: 20px;
+  width: 23em;
 }
 
-.weather > div {
-  display: table-row;
-  width: 500px;
+.weather-main {
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1em;
 }
 
-.weather > hr {
-  width: 200%;
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.weather-main > div {
-  display: table-cell;
-  height: 150px;
-  width: 150px;
+.container:first-child {
+  margin-bottom: 0.5em;
+}
+
+.container-item {
+  flex-basis: 100px;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .weather-temprature {
-  font-size: 5vw;
-  text-align: center;
-  vertical-align: middle;
+  font-size: 2.5em;
 }
 
-.weather-icon {
-  vertical-align: middle;
+.weather-cloud-icon {
+  height: 5.5em;
 }
 
-img.icon {
-  display: block;
-  margin: auto;
-  width: 50%;
+.weather-cloud-icon img {
+  height: 100%;
 }
 
-.weather-bottom > div {
-  display: table-cell;
-  text-align: center;
-  margin: 0 50px 0 50px;
+.weather-wind {
+  font-size: 0.8em;
+}
+
+.weather-humidity {
+  font-size: 0.8em;
+}
+
+.weather-forecast {
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
 }
 
 .weather-forecast-day {
-  width: 200%;
-
   display: flex;
-
-  font-size: 2.5vh;
 }
 
-.weather-forecast-day-name {
-}
-
-.weather-forecast-day-main {
+.weather-forecast td {
+  box-sizing: border-box;
+  width: calc(100% / 3);
   display: flex;
-  width: 100px;
-  margin: auto;
+  align-items: center;
+  height: 1.5em;
+  font-size: 0.9em; 
 }
 
-.weather-forecast-day-main > div {
-  margin: auto;
+.weather-forecast-day-cloud-temprature {
+  justify-content: center;
 }
 
-.weather-forecast-day-icon {
+.weather-forecast-day-cloud-temprature img {
+  height: 70%;
+  margin-right: 0.4em;
   opacity: 0.6;
-  margin: auto;
-  height: 20px;
 }
 
 .weather-forecast-day-precipitation {
-  display: flex;
+  justify-content: flex-end;
 }
+
+.weather-forecast-day-precipitation img {
+  height: 80%;
+  opacity: 0.6;
+}
+
 </style>
