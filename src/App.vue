@@ -34,11 +34,42 @@ export default {
   created: function () {
     this.wsConnection = new WebSocket("ws://localhost:8081/ws");
 
-    this.wsConnection.onopen = function () {
+    this.wsConnection.addEventListener("open", () => {
       console.log("Successfully connected to WS Server");
-    };
 
+      // Как только установили WS соединение, сразу отправляем 
+      // серверу "настройки клиента".
+      this.wsConnection.send(JSON.stringify({
+        name: "mirror-frontend",
+        screen: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        },
+        widgets: [{
+          name: "AnalogClock",
+          position: {
+            x: 100,
+            y: 100,
+          },
+          size: {
+            width: 300,
+            height: 300,
+          }
+        }],
+      }));
+    });
+
+    this.wsConnection.addEventListener("close", () => {
+      console.log("Successfully disconnected from WS Server");
+    })
+  
     this.wsConnection.onmessage = function (event) {
+			var message = JSON.parse(event.data)
+      
+      if (message.type == "moveWidget") {
+        EventBus.$emit(`move_${message.data.widgetName}`, message.data)
+      }
+
       if (event.data == "Keyword") {
         EventBus.$emit("VoiceAssistant", event.data);
       }

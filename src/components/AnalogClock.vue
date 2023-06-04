@@ -10,10 +10,13 @@
 
 <script>
 
+import { EventBus } from "@/App.vue";
+
 const SCALE = 5;
+const componentName = "AnalogClock";
 
 export default {
-	name: "AnalogClock",
+	name: componentName,
 	data: () => ({
 		currentTime: null,
 		hourHand: null,
@@ -21,6 +24,11 @@ export default {
 		secondHand: null,
 	}),
 	mounted() {
+		EventBus.$on(`move_${componentName}`, (data) => {
+			this.$refs.wrapper.style.top = `${data.y}px`;
+			this.$refs.wrapper.style.left = `${data.x}px`;
+		});
+
 		this.$refs.wrapper.style.width = `${SCALE * 100}px`;
 		this.$refs.wrapper.style.height = `${SCALE * 100}px`;
 
