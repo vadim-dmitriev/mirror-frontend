@@ -38,7 +38,7 @@
 
 <script>
 
-const FONT_SIZE = 20;
+const FONT_SIZE = 30;
 
 export default {
   name: "Weather",

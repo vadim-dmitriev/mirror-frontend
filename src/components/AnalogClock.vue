@@ -10,7 +10,7 @@
 
 <script>
 
-const SCALE = 2;
+const SCALE = 5;
 
 export default {
 	name: "AnalogClock",
