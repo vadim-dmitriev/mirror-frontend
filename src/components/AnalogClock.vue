@@ -25,7 +25,7 @@ export default {
 	}),
 	mounted() {
 		EventBus.$emit(`state`, {
-			componentName: componentName,
+			Name: componentName,
 			position: {
 				X: this.$refs.wrapper.getBoundingClientRect().left,
 				Y: this.$refs.wrapper.getBoundingClientRect().top,
