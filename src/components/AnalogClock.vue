@@ -24,6 +24,18 @@ export default {
 		secondHand: null,
 	}),
 	mounted() {
+		EventBus.$emit(`state`, {
+			componentName: componentName,
+			position: {
+				X: this.$refs.wrapper.getBoundingClientRect().left,
+				Y: this.$refs.wrapper.getBoundingClientRect().top,
+			},
+			size: {
+				Width: this.$refs.wrapper.getBoundingClientRect().width,
+				Height: this.$refs.wrapper.getBoundingClientRect().height,
+			},
+		});
+
 		EventBus.$on(`move_${componentName}`, (data) => {
 			this.$refs.wrapper.style.top = `${data.y}px`;
 			this.$refs.wrapper.style.left = `${data.x}px`;

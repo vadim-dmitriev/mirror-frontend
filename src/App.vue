@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <AnalogClock class="visible-bottom-widget" />
-    <Weather class="visible-top-widget" />
-    <NewsFeed class="visible-top-widget" />
+	<AnalogClock class="visible-bottom-widget" />
+	<Weather class="visible-top-widget" />
+	<NewsFeed class="visible-top-widget" />
 
-    <VoiceAssistant class="hidden-widget" />
+	<VoiceAssistant class="hidden-widget" />
   </div>
 </template>
 
@@ -19,62 +19,59 @@ import NewsFeed from "./components/NewsFeed.vue";
 export const EventBus = new Vue();
 
 export default {
-  name: "App",
-  components: {
-    AnalogClock,
-    Weather,
-    VoiceAssistant,
-    NewsFeed,
-  },
-  data: function () {
-    return {
-      wsConnection: null,
-    };
-  },
-  created: function () {
-    this.wsConnection = new WebSocket("ws://192.168.1.128:8081/ws");
+	name: "App",
+	components: {
+		AnalogClock,
+		Weather,
+		VoiceAssistant,
+		NewsFeed,
+	},
+	data: function () {
+		return {
+			wsConnection: null,
+		};
+	},
+	created: function () {
+		let initialComponentStates = []
 
-    this.wsConnection.addEventListener("open", () => {
-      console.log("Successfully connected to WS Server");
+		EventBus.$on("state", (data) => {
+			initialComponentStates.push(data);
+		});
 
-      // Как только установили WS соединение, сразу отправляем 
-      // серверу "настройки клиента".
-      this.wsConnection.send(JSON.stringify({
-        name: "mirror-frontend",
-        screen: {
-          width: window.innerWidth,
-          height: window.innerHeight,
-        },
-        widgets: [{
-          name: "AnalogClock",
-          position: {
-            x: 100,
-            y: 100,
-          },
-          size: {
-            width: 300,
-            height: 300,
-          }
-        }],
-      }));
-    });
+		this.wsConnection = new WebSocket("ws://192.168.1.128:8081/ws");
+			
+		this.wsConnection.addEventListener("open", () => {
+			console.log("Successfully connected to WS Server");
+			
+			// Как только установили WS соединение, сразу отправляем 
+			// серверу "настройки клиента".
+			this.wsConnection.send(JSON.stringify({
+				name: "mirror-frontend",
+				screen: {
+					width: window.innerWidth,
+					height: window.innerHeight,
+				},
+				widgets: initialComponentStates,
+			}));
+		});
 
-    this.wsConnection.addEventListener("close", () => {
-      console.log("Successfully disconnected from WS Server");
-    })
-  
-    this.wsConnection.onmessage = function (event) {
+		this.wsConnection.addEventListener("close", () => {
+			console.log("Successfully disconnected from WS Server");
+		})
+
+		this.wsConnection.onmessage = function (event) {
 			var message = JSON.parse(event.data)
-      
-      if (message.type == "moveWidget") {
-        EventBus.$emit(`move_${message.data.widgetName}`, message.data)
-      }
+			
+			if (message.type == "moveWidget") {
+				EventBus.$emit(`move_${message.data.widgetName}`, message.data)
+			}
 
-      if (event.data == "Keyword") {
-        EventBus.$emit("VoiceAssistant", event.data);
-      }
-    };
-  },
+			if (event.data == "Keyword") {
+				EventBus.$emit("VoiceAssistant", event.data);
+			}
+		};
+
+	},
 };
 </script>
 

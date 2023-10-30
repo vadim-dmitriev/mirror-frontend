@@ -1,5 +1,5 @@
 <template>
-  <div class="news">
+  <div ref="wrapper" class="news">
     <div v-for="(item, index) in news" :key="index">
       <div class="news-item">
         <img
@@ -17,14 +17,31 @@
 </template>
 
 <script>
+
+import { EventBus } from "@/App.vue";
+
+const componentName = "NewsFeed";
+
 export default {
-  name: "NewsFeed",
+  name: componentName,
   data: function () {
     return {
       news: [],
     };
   },
   mounted: async function () {
+    EventBus.$emit(`state`, {
+			componentName: componentName,
+			position: {
+				X: this.$refs.wrapper.getBoundingClientRect().left,
+				Y: this.$refs.wrapper.getBoundingClientRect().top,
+			},
+			size: {
+				Width: this.$refs.wrapper.getBoundingClientRect().width,
+				Height: this.$refs.wrapper.getBoundingClientRect().height,
+			},
+		});
+
     await this.updateNews();
 
     setInterval(this.updateNews, 1 * 60 * 1000);

@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div ref="wrapper" class="wrapper">
     <div ref="weather" class="weather">
       <div class="weather-main">
         <div class="container">
@@ -38,10 +38,13 @@
 
 <script>
 
+import { EventBus } from "@/App.vue";
+
+const componentName = "Weather";
 const FONT_SIZE = 30;
 
 export default {
-  name: "Weather",
+  name: componentName,
   data() {
     return {
       currentTemprature: 0,
@@ -88,6 +91,18 @@ export default {
     };
   },
   mounted: async function () {
+    EventBus.$emit(`state`, {
+			componentName: componentName,
+			position: {
+				X: this.$refs.wrapper.getBoundingClientRect().left,
+				Y: this.$refs.wrapper.getBoundingClientRect().top,
+			},
+			size: {
+				Width: this.$refs.wrapper.getBoundingClientRect().width,
+				Height: this.$refs.wrapper.getBoundingClientRect().height,
+			},
+		});
+
     this.$refs.weather.style.fontSize = `${FONT_SIZE}px`;
 
     await this.updateWeatherData();
