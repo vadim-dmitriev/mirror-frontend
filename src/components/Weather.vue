@@ -47,7 +47,7 @@ export default {
       currentTemprature: 0,
       currentWindSpeed: 0,
       currentHumidity: 0,
-      currentWeatherKind: "clear",
+      currentKind: "clear",
       forecast: [
         {
           minTemp: 1,
@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     updateWeatherData: async function () {
-      let response = await fetch("http://localhost:8081/weather");
+      let response = await fetch("http://192.168.1.128:8081/weather");
 
       if (response.status == 200) {
         let json = await response.json();
@@ -150,7 +150,7 @@ export default {
     currentWeatherKindIcon: function () {
       // Иконки взяты с https://www.iconfinder.com/iconsets/weather-line-5
       return require("@/assets/icons/weather/" +
-        this.currentWeatherKind +
+        this.currentKind +
         ".png");
     },
     currentWindSpeedViewed: function () {

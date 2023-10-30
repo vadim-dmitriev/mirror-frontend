@@ -32,7 +32,7 @@ export default {
     };
   },
   created: function () {
-    this.wsConnection = new WebSocket("ws://localhost:8081/ws");
+    this.wsConnection = new WebSocket("ws://192.168.1.128:8081/ws");
 
     this.wsConnection.addEventListener("open", () => {
       console.log("Successfully connected to WS Server");

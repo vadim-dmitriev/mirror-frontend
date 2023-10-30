@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     updateNews: async function () {
-      let response = await fetch("http://localhost:8081/news");
+      let response = await fetch("http://192.168.1.128:8081/news");
 
       if (response.status == 200) {
         let json = await response.json();
