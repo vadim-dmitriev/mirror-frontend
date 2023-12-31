@@ -27,12 +27,12 @@ export default {
 		EventBus.$emit(`state`, {
 			Name: componentName,
 			position: {
-				X: this.$refs.wrapper.getBoundingClientRect().left,
-				Y: this.$refs.wrapper.getBoundingClientRect().top,
+				X: Math.floor(this.$refs.wrapper.getBoundingClientRect().left),
+				Y: Math.floor(this.$refs.wrapper.getBoundingClientRect().top),
 			},
 			size: {
-				Width: this.$refs.wrapper.getBoundingClientRect().width,
-				Height: this.$refs.wrapper.getBoundingClientRect().height,
+				Width: Math.floor(this.$refs.wrapper.getBoundingClientRect().width),
+				Height: Math.floor(this.$refs.wrapper.getBoundingClientRect().height),
 			},
 		});
 

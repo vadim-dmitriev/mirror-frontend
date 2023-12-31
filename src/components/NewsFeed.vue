@@ -18,7 +18,7 @@
 
 <script>
 
-import { EventBus } from "@/App.vue";
+import { EventBus, BackendHost } from "@/App.vue";
 
 const componentName = "NewsFeed";
 
@@ -33,12 +33,12 @@ export default {
     EventBus.$emit(`state`, {
 			Name: componentName,
 			position: {
-				X: this.$refs.wrapper.getBoundingClientRect().left,
-				Y: this.$refs.wrapper.getBoundingClientRect().top,
+				X: Math.floor(this.$refs.wrapper.getBoundingClientRect().left),
+				Y: Math.floor(this.$refs.wrapper.getBoundingClientRect().top),
 			},
 			size: {
-				Width: this.$refs.wrapper.getBoundingClientRect().width,
-				Height: this.$refs.wrapper.getBoundingClientRect().height,
+				Width: Math.floor(this.$refs.wrapper.getBoundingClientRect().width),
+				Height: Math.floor(this.$refs.wrapper.getBoundingClientRect().height),
 			},
 		});
 
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     updateNews: async function () {
-      let response = await fetch("http://192.168.1.128:8081/news");
+      let response = await fetch(`http://${BackendHost}:8081/news`);
 
       if (response.status == 200) {
         let json = await response.json();

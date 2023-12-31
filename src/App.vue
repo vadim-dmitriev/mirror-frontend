@@ -18,6 +18,8 @@ import NewsFeed from "./components/NewsFeed.vue";
 
 export const EventBus = new Vue();
 
+export const BackendHost = process.env.VUE_APP_BACKEND_HOST || "192.168.1.128";
+
 export default {
 	name: "App",
 	components: {
@@ -37,8 +39,8 @@ export default {
 		EventBus.$on("state", (data) => {
 			initialComponentStates.push(data);
 		});
-
-		this.wsConnection = new WebSocket("ws://192.168.1.128:8081/ws");
+		
+		this.wsConnection = new WebSocket(`ws://${BackendHost}:8081/ws`);
 			
 		this.wsConnection.addEventListener("open", () => {
 			console.log("Successfully connected to WS Server");
