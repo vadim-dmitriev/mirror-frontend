@@ -3,6 +3,7 @@
 	<AnalogClock class="visible-bottom-widget" />
 	<Weather class="visible-top-widget" />
 	<NewsFeed class="visible-top-widget" />
+	<Calendar />
 
 	<VoiceAssistant class="hidden-widget" />
   </div>
@@ -15,6 +16,7 @@ import AnalogClock from "./components/AnalogClock.vue";
 import Weather from "./components/Weather.vue";
 import VoiceAssistant from "./components/VoiceAssistant.vue";
 import NewsFeed from "./components/NewsFeed.vue";
+import Calendar from "./components/Calendar.vue";
 
 export const EventBus = new Vue();
 
@@ -27,6 +29,7 @@ export default {
 		Weather,
 		VoiceAssistant,
 		NewsFeed,
+		Calendar,
 	},
 	data: function () {
 		return {
