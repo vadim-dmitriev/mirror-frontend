@@ -11,14 +11,17 @@
 <script>
 import Vue from "vue";
 
+// Components
 import AnalogClock from "./components/AnalogClock.vue";
 import Weather from "./components/Weather.vue";
 import VoiceAssistant from "./components/VoiceAssistant.vue";
 import NewsFeed from "./components/NewsFeed.vue";
 
+// Tools
+import { MirrorLayoutAPIHost } from './clients/mirror-layout-api'
+
 export const EventBus = new Vue();
 
-export const BackendHost = process.env.VUE_APP_BACKEND_HOST || "192.168.1.128";
 
 export default {
 	name: "App",
@@ -40,7 +43,7 @@ export default {
 			initialComponentStates.push(data);
 		});
 		
-		this.wsConnection = new WebSocket(`ws://${BackendHost}:8081/ws`);
+		this.wsConnection = new WebSocket(`ws://${MirrorLayoutAPIHost}/ws`);
 			
 		this.wsConnection.addEventListener("open", () => {
 			console.log("Successfully connected to WS Server");
