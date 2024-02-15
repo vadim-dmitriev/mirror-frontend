@@ -38,7 +38,8 @@
 
 <script>
 
-import { EventBus, BackendHost } from "@/App.vue";
+import { EventBus } from "@/App.vue";
+import { MirrorLayoutAPIClient } from "../clients/mirror-layout-api"
 
 const componentName = "Weather";
 const FONT_SIZE = 30;
@@ -50,41 +51,41 @@ export default {
       currentTemprature: 0,
       currentWindSpeed: 0,
       currentHumidity: 0,
-      currentKind: "clear",
+      currentKind: "Kind_CLEAR",
       forecast: [
         {
           minTemp: 1,
           maxTemp: 2,
           pop: 15,
-          kind: "clear",
+          kind: "Kind_CLEAR",
           dayOfWeek: "Ср",
         },
         {
           minTemp: 1,
           maxTemp: 2,
           pop: 15,
-          kind: "clear",
+          kind: "Kind_CLEAR",
           dayOfWeek: "Чт",
         },
         {
           minTemp: 1,
           maxTemp: 2,
           pop: 15,
-          kind: "clear",
+          kind: "Kind_CLEAR",
           dayOfWeek: "Пт",
         },
         {
           minTemp: 1,
           maxTemp: 2,
           pop: 15,
-          kind: "clear",
+          kind: "Kind_CLEAR",
           dayOfWeek: "Сб",
         },
         {
           minTemp: 1,
           maxTemp: 2,
           pop: 15,
-          kind: "clear",
+          kind: "Kind_CLEAR",
           dayOfWeek: "Вс",
         },
       ],
@@ -105,44 +106,37 @@ export default {
 
     this.$refs.weather.style.fontSize = `${FONT_SIZE}px`;
 
-    await this.updateWeatherData();
-    // Запускаем обновление данных о погоде с интервалом в минуту
-    setInterval(this.updateWeatherData, 1 * 60 * 1000);
+    await this.updateCurrentWeather();
+    await this.updateWeatherForecast();
+
+    // Запускаем обновление данных о погоде.
+    setInterval(this.updateCurrentWeather, 1 * 60 * 1000);
+    setInterval(this.updateWeatherForecast, 10 * 60 * 1000);
   },
   methods: {
-    updateWeatherData: async function () {
-      let response = await fetch(`http://${BackendHost}:8081/weather`);
+    updateCurrentWeather: async function () {
+      let currentWeater = await MirrorLayoutAPIClient.getCurrentWeather();
 
-      if (response.status == 200) {
-        let json = await response.json();
+      this.setCurrentWeather(currentWeater);
+    },
+    updateWeatherForecast: async function () {
+      let weatherForecast = await MirrorLayoutAPIClient.getWeatherForecast();
 
-        this.setCurrentWeather(json.current);
-        this.setWeatherForecast(json.forecast);
-      }
-
-      let days = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
-      let currentTime = new Date();
-
-      for (let i = 0; i < this.forecast.length; i++) {
-        this.forecast[i].dayOfWeek =
-          days[(currentTime.getDay() + i) % days.length];
-      }
+      this.setWeatherForecast(weatherForecast);
     },
     setCurrentWeather(currentWeather) {
-      this.currentTemprature = currentWeather.temp;
+      this.currentTemprature = currentWeather.temprature;
       this.currentHumidity = currentWeather.humidity;
-      this.currentWindSpeed = currentWeather.wind_speed;
+      this.currentWindSpeed = currentWeather.windSpeed;
       this.currentKind = currentWeather.kind;
     },
     setWeatherForecast(weatherForecast) {
-      let forecastList = weatherForecast.list;
-
-      for (let i = 0; i < forecastList.length; i++) {
-        this.forecast[i].minTemp = Number(forecastList[i].temp_min).toFixed(0);
-        this.forecast[i].maxTemp = Number(forecastList[i].temp_max).toFixed(0);
-        this.forecast[i].pop = forecastList[i].pop * 100;
-        this.forecast[i].kind = forecastList[i].kind;
-        this.forecast[i].humidity = forecastList[i].humidity;
+      for (let i = 0; i < weatherForecast.length; i++) {
+        this.forecast[i].minTemp = Number(weatherForecast[i].minTemprature).toFixed(0);
+        this.forecast[i].maxTemp = Number(weatherForecast[i].maxTemprature).toFixed(0);
+        this.forecast[i].pop = weatherForecast[i].pop * 100;
+        this.forecast[i].kind = weatherForecast[i].kind;
+        this.forecast[i].humidity = weatherForecast[i].humidity;
       }
     },
     weatherForecastIcon(forecastKind) {
