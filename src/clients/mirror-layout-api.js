@@ -1,14 +1,22 @@
 class MirrorLayoutAPI{
-  constructor(host) {
-    this.host = host;
+  #host
 
-    this.getRSSPath = "/v1/get_rss";
-    this.getCurrentWeatherPath = "/v1/get_current_weather";
-    this.getWeatherForecastPath = "/v1/get_weather_forecast";
+  #getRSSPath
+  #getCurrentWeatherPath
+  #getWeatherForecastPath
+  #getAllEventsPath
+
+  constructor(host) {
+    this.#host = host;
+
+    this.#getRSSPath = "/v1/get_rss";
+    this.#getCurrentWeatherPath = "/v1/get_current_weather";
+    this.#getWeatherForecastPath = "/v1/get_weather_forecast";
+    this.#getAllEventsPath = "/v1/get_all_events";
   }
 
   async getRSS() {
-    let bytes = await fetch(`http://${this.host}${this.getRSSPath}`, {
+    let bytes = await fetch(`http://${this.#host}${this.#getRSSPath}`, {
       method: "GET",
       headers: { "Accept": "application/json" }
     })
@@ -34,7 +42,7 @@ class MirrorLayoutAPI{
   }
 
   async getCurrentWeather() {
-    let bytes = await fetch(`http://${this.host}${this.getCurrentWeatherPath}`, {
+    let bytes = await fetch(`http://${this.#host}${this.#getCurrentWeatherPath}`, {
       method: "GET",
       headers: { "Accept": "application/json" }
     })
@@ -52,7 +60,7 @@ class MirrorLayoutAPI{
   }
 
   async getWeatherForecast() {
-    let bytes = await fetch(`http://${this.host}${this.getWeatherForecastPath}`, {
+    let bytes = await fetch(`http://${this.#host}${this.#getWeatherForecastPath}`, {
       method: "GET",
       headers: { "Accept": "application/json" }
     })
@@ -73,6 +81,28 @@ class MirrorLayoutAPI{
     }
     
     return forecastDays;
+  }
+
+  async getAllEvents() {
+    let bytes = await fetch(`http://${this.#host}${this.#getAllEventsPath}`, {
+      method: "GET",
+      headers: { "Accept": "application/json" }
+    })
+
+    let response = await bytes.json()
+
+    let rawEvents = response.events;
+    let events = Array(rawEvents.length);
+    
+    for (let i = 0; i < rawEvents.length; i++) {
+      events[i] = {
+        title: rawEvents[i].title,
+        start: rawEvents[i].start,
+        end: rawEvents[i].end,
+      };
+    }
+    
+    return events;
   }
 
 }
