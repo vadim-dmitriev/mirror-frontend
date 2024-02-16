@@ -1,19 +1,21 @@
 <template>
-  <div ref="wrapper" class="news">
-    <div v-for="(item, index) in news" :key="index">
-      <div class="news-item">
-        <img
-          class="news-item-icon"
-          v-bind:src="getSourceIcon(item.Source.ID)"
-        />
-        <div class="news-item-created">
-          {{ getCreatedTime(item.Created) }}
-        </div>
-        <div class="news-item-title">{{ item.Title }}</div>
+
+<div ref="wrapper" class="wrapper">
+  <div v-for="(item, index) in news" :key="index">
+    <div class="news-item">
+      <img
+        class="news-item-icon"
+        v-bind:src="getSourceIcon(item.Source.ID)"
+      />
+      <div class="news-item-created">
+        {{ getCreatedTime(item.Created) }}
       </div>
-      <hr v-show="index < news.length - 1" size="0" color="#bbb" noshade />
+      <div class="news-item-title">{{ item.Title }}</div>
     </div>
+    <hr v-show="index < news.length - 1" size="0" color="#bbb" noshade />
   </div>
+</div>
+
 </template>
 
 <script>
@@ -91,8 +93,9 @@ export default {
 </script>
 
 <style scoped>
-.news {
-  left: 750px;
+
+.wrapper {
+  margin: 20px;
   width: 800px;
   font-size: 20px;
 }
@@ -115,4 +118,5 @@ export default {
 .news-item-created {
   margin: 10px;
 }
+
 </style>
