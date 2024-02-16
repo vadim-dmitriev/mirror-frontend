@@ -18,7 +18,8 @@
 
 <script>
 
-import { EventBus, BackendHost } from "@/App.vue";
+import { EventBus } from "@/App.vue";
+import { MirrorLayoutAPIClient } from "../clients/mirror-layout-api"
 
 const componentName = "NewsFeed";
 
@@ -26,10 +27,13 @@ export default {
   name: componentName,
   data: function () {
     return {
+      mirrorLayoutAPIClient: null,
       news: [],
     };
   },
   mounted: async function () {
+    this.mirrorLayoutAPIClient = MirrorLayoutAPIClient;
+
     EventBus.$emit(`state`, {
 			Name: componentName,
 			position: {
@@ -48,13 +52,9 @@ export default {
   },
   methods: {
     updateNews: async function () {
-      let response = await fetch(`http://${BackendHost}:8081/news`);
+      let rss = await this.mirrorLayoutAPIClient.getRSS();
 
-      if (response.status == 200) {
-        let json = await response.json();
-
-        this.setNews(json.news);
-      }
+      this.setNews(rss)
     },
     setNews: function (news) {
       this.news = new Array(news.length);
