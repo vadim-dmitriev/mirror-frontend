@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Environments
+VUE_APP_MIRROR_LAYOUT_API=localhost:8081
