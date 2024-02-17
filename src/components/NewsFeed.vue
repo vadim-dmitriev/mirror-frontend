@@ -95,7 +95,10 @@ export default {
 <style scoped>
 
 .wrapper {
-  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
   width: 800px;
   font-size: 20px;
 }
@@ -103,8 +106,7 @@ export default {
 .news-item {
   display: flex;
   align-items: center;
-
-  margin: 10px;
+  flex-direction: row;
 }
 
 .news-item-icon {
