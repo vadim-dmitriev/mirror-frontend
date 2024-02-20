@@ -96,6 +96,10 @@ export default {
         location.reload()
       }
 
+      if (message.type == "refresh_widget") {
+        EventBus.$emit(`refresh_widget_${message.data}`)
+      }
+
       if (event.data == "Keyword") {
         EventBus.$emit("VoiceAssistant", event.data);
       }
