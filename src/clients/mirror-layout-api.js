@@ -1,18 +1,16 @@
 class MirrorLayoutAPI{
   #host
 
-  #getRSSPath
-  #getCurrentWeatherPath
-  #getWeatherForecastPath
-  #getAllEventsPath
+  #getRSSPath = "/v1/get_rss"
+  #getCurrentWeatherPath = "/v1/get_current_weather"
+  #getWeatherForecastPath = "/v1/get_weather_forecast"
+  #getAllEventsPath = "/v1/get_all_events"
+  #getInitialConfigPath = "/v1/get_initial_config"
+
+  addMobileClientPath = "/v1/add_mobile_client"
 
   constructor(host) {
     this.#host = host;
-
-    this.#getRSSPath = "/v1/get_rss";
-    this.#getCurrentWeatherPath = "/v1/get_current_weather";
-    this.#getWeatherForecastPath = "/v1/get_weather_forecast";
-    this.#getAllEventsPath = "/v1/get_all_events";
   }
 
   async getRSS() {
@@ -103,6 +101,27 @@ class MirrorLayoutAPI{
     }
     
     return events;
+  }
+
+  async getInitialConfig() {
+    let response;
+
+    await fetch(`http://${this.#host}${this.#getInitialConfigPath}`, {
+      method: "GET",
+      headers: { "Accept": "application/json" }
+    })
+    .then(bytes => bytes.json())
+    .then(rawResponse => {
+        console.log("from-client", rawResponse)
+
+        response = {
+          hasClients: rawResponse.hasClients,
+          backendLocalIP: rawResponse.backendLocalIp
+        }
+
+    });
+
+    return response;
   }
 
 }

@@ -48,6 +48,11 @@ export default {
 			},
 		});
 
+    EventBus.$on(`refresh_widget_${componentName}`, () => {
+      console.log(`refresh_widget_${componentName}`);
+      this.updateNews();
+    });
+
     await this.updateNews();
 
     setInterval(this.updateNews, 1 * 60 * 1000);
@@ -78,7 +83,11 @@ export default {
       });
     },
     getSourceIcon: function (source_id) {
-      return require("@/assets/icons/news_sources/" + source_id + ".png");
+      try {
+        return require(`@/assets/icons/news_sources/${source_id}.png`);
+      } catch (e) {
+        console.log(`SOURCE NOT FOUND: @/assets/icons/news_sources/${source_id}.png`)
+      }
     },
     getCreatedTime: function (created) {
       let options = {
@@ -95,7 +104,10 @@ export default {
 <style scoped>
 
 .wrapper {
-  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
   width: 800px;
   font-size: 20px;
 }
@@ -103,8 +115,7 @@ export default {
 .news-item {
   display: flex;
   align-items: center;
-
-  margin: 10px;
+  flex-direction: row;
 }
 
 .news-item-icon {

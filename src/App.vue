@@ -1,17 +1,26 @@
 <template>
 
 <div class="app">
-  <AnalogClock class="visible-bottom-widget" />
-  <Weather class="visible-top-widget" />
-  <Calendar class="visible-top-widget" />
-  <NewsFeed class="visible-top-widget" />
 
-  <VoiceAssistant class="hidden-widget" />
+  <div v-if="this.config.hasClients" class="common-widget">
+    <NewsFeed class="widget" />
+    <AnalogClock class="widget" />
+    <Calendar class="widget" />
+    <Weather class="widget" />
+
+    <VoiceAssistant class="hidden-widget" />
+  </div>
+
+  <div v-else class="initial-start-up">
+    <InitialStartUp class="widget" v-bind:backendLocalIP="this.config.backendLocalIP" />
+  </div>
+
 </div>
 
 </template>
 
 <script>
+
 import Vue from "vue";
 
 // Components
@@ -20,12 +29,13 @@ import Weather from "./components/Weather.vue";
 import VoiceAssistant from "./components/VoiceAssistant.vue";
 import NewsFeed from "./components/NewsFeed.vue";
 import Calendar from "./components/Calendar.vue";
+import InitialStartUp from "./components/InitialStartUp.vue";
 
 // Tools
-import { MirrorLayoutAPIHost } from './clients/mirror-layout-api'
+import { MirrorLayoutAPIHost, MirrorLayoutAPIClient } from './clients/mirror-layout-api'
 
+// EventBus
 export const EventBus = new Vue();
-
 
 export default {
   name: "App",
@@ -35,13 +45,19 @@ export default {
     VoiceAssistant,
     NewsFeed,
     Calendar,
+    InitialStartUp,
   },
   data: function () {
     return {
       wsConnection: null,
+      config: null
     };
   },
-  created: function () {
+  beforeMount: async function () {
+    this.config = await MirrorLayoutAPIClient.getInitialConfig();
+
+    console.log("config", this.config)
+
     let initialComponentStates = []
 
     EventBus.$on("state", (data) => {
@@ -76,6 +92,14 @@ export default {
         EventBus.$emit(`move_${message.data.widgetName}`, message.data)
       }
 
+      if (message.type == "refresh_screen") {
+        location.reload()
+      }
+
+      if (message.type == "refresh_widget") {
+        EventBus.$emit(`refresh_widget_${message.data}`)
+      }
+
       if (event.data == "Keyword") {
         EventBus.$emit("VoiceAssistant", event.data);
       }
@@ -98,12 +122,40 @@ html {
   font-family: "Roboto", sans-serif;
 }
 
-.app {
-  display: flex;
+body {
+  margin: 0px;
 }
 
-.visible-top-widget {
-  flex: 1;
+</style>
+
+<style scoped>
+
+.app {
+  width: 100%;
+  height: 100vh;
+}
+
+.common-widget {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+
+  height: 100vh;
+}
+
+.widget {
+  margin: 10px;
+}
+
+.initial-start-up {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
 }
 
 .visible-bottom-widget {
@@ -120,7 +172,7 @@ html {
   display: flex;
 
   height: 100vh;
-  width: 100vw;
+  width: 100%;
 
   justify-content: center;
   align-items: center;
